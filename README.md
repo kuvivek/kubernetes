@@ -4,8 +4,10 @@ Master Node should have atleast 2 Core CPU and 4 GB RAM
 and Node should have atleast 1 core CPU and 4 GB RAM
 
 On the master node execute the following commands
-1) sudo kubeadm init --pod-network-cidr=<> --apiserver-advertise-address=<ip-address-of-master>
-// For starting a Calico CNI(container network interface), with the network range for a particular pod 192.168.0.0/16 or For starting a Flannel CNI: 10.244.0.0/16
+1) sudo kubeadm init --pod-network-cidr=[Calico CNI | Flannel CNI] --apiserver-advertise-address=[Master node IPAddress]
+ 
+// For starting a Calico CNI(container network interface), with the network range for a particular pod 192.168.0.0/16 
+and For starting a Flannel CNI the network range is: 10.244.0.0/16
 
 Then execute the following set of commands as suggested by the output of the first command.
 
@@ -29,7 +31,7 @@ like calico-etcd, kube-controller, etcd-master, dns server
 
 kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 
-8)Dashboard once created need to be up and running and the command to bring the dashboard up and running is:
+8) Dashboard once created need to be up and running and the command to bring the dashboard up and running is:
 
 kubectl proxy
 
