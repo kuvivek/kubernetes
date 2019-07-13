@@ -13,20 +13,16 @@ Docker CE 18.06.1 to our cluster nodes.
 
 Installation Steps:
 Add GPG key:
-
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
 Add Docker repository:
-
-# sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  # sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 Update packages:
-
-# sudo apt-get update
+  # sudo apt-get update
 
 Install Docker:
-
-# sudo apt-get install -y docker-ce=18.06.1~ce~3-0~ubuntu
+  # sudo apt-get install -y docker-ce=18.06.1~ce~3-0~ubuntu
 
 
 Installing Kubeadm, Kubelet, and Kubectl
@@ -89,8 +85,7 @@ Configure Cluster Network with Flannel
 =======================================
 In Kubernetes, the communication between pods occurs on the cluster network. 
 To set up the cluster network, install the network add-on after bootstrapping
-the cluster. In this lesson, we will prepare the cluster nodes for the cluster
-network and then install the Flannel network add on.
+the cluster. Now prepare the cluster nodes for the cluster network and then install the Flannel network add on.
 
 Install the Flannel Network Addon
 
@@ -145,16 +140,18 @@ Working with Pods
 1. Create a Pod
   a) Using kubectl run (deprecated), However this will create a deployment 
      kubectl run <name> --image=<image>
-	 
-	 E.g kubectl run test --image=nginx 
+ 
+    E.g kubectl run test --image=nginx 
 This will create a deployment object under which a test pod is created
 like deployment.apps/test under the default namespace, as we have not passed 
 any namespace.
 	 
-	 To verify pods are created:
-	 kubectl get pods
+To verify pods are created:
+
+  kubectl get pods
 	 
   b) Using kubectl create deployment:
+  
   kubectl create deployment <name> --image=<image>
   
   E.g 
@@ -204,16 +201,16 @@ git clone https://github.com/linuxacademy/microservices-demo
 Install the Microservice Application to the Cluster
 ---------------------------------------------------
 1. Create a namespace for the application:
-kubectl create namespace sock-shop
-
+  kubectl create namespace sock-shop
+ 
 2. Install the microservice application under the "sock-shop" namespace.
-kubectl -n sock-shop create -f microservices-demo/deploy/kubernetes/complete-demo.yaml
+  kubectl -n sock-shop create -f microservices-demo/deploy/kubernetes/complete-demo.yaml
 
 3. List the pods for the newly created application
-kubectl get pods -n sock-shop
+  kubectl get pods -n sock-shop
 
 Note: Using -w allows you to see view the pods as they start up in the real time:
-kubectl get pods -n sock-shop -w
+  kubectl get pods -n sock-shop -w
 
 Working with the Microservice Application
 ------------------------------------------
@@ -239,13 +236,9 @@ Kubernetes takes ab otherwise very complex application and makes the management 
 
 Kubernetes API
 ==============
-The Kubernetes API is the main gateway for interacting with all the components in
-the cluster. This a RESTful API that supports interactions provided through HTTP
-verbs viz GET, POST, DELETE, PUT, PATCH
+The Kubernetes API is the main gateway for interacting with all the components in the cluster. This a RESTful API that supports interactions provided through HTTP verbs viz GET, POST, DELETE, PUT, PATCH
 
-Of the three components on the master that make up the control plane- the API
-Server. The Controller Manager, and the Scheduler - the API Server is the only
-component that directly interacts with the distributed key-value store, etcd.
+Of the three components on the master that make up the control plane- the API Server. The Controller Manager, and the Scheduler - the API Server is the only component that directly interacts with the distributed key-value store, etcd.
 
 The Kubernetes API is exposed by the kube-apiserver, which runs on the master. This serves as the frontend for the Kubernetes control plane.
 
@@ -280,7 +273,7 @@ Using command-line tools such kubectl and kubeadm.
 Calling the API directly using REST calls.
   - With kubectl proxy - Run 
     
-	kubectl proxy --port=8080 & 
+    kubectl proxy --port=8080 & 
   
   then use curl, wget or a browser to interact with the API:
  curl http://localhost:8080/api/
@@ -325,12 +318,19 @@ become the default DNS server for Kubernetes.
 The Corefile is kept in a configmap and can be updated to add plugins which provie new functionality for CoreDNS and change the way service discovery works:
 
 -- Display current configmaps.
+
   kubectl get configmap --all-namespaces.
+
 -- View CoreDNS configmap:
+
   kubectl describe configmap coredns -n kube-system
+
 -- Display current deployments:
+
   kubectl get deployments --all-namespaces
+
 -- View coredns deployment:
+
   kubectl describe deployments -n kube-system coredns
 
 Note: The coredns configmap is referenced in the coredns deployment when it is
@@ -340,14 +340,18 @@ CoreDNS.
 Querying the Cluster DNS:
 --------------------------
 1. Install a Pod running curl to query other Pods in the cluster, in a default namespace(so no -n option provided):
+  
   kubectl run curl --image=radial/busyboxpluz:curl -i --tty 
   
 2. Attach to running curlPod:
+  
   kubectl attach <name of pod> -id
 
 3. Querying Services from curlPod
+  
   - Services in the same namespace
     curl <service>
+  
   - Services in a different namespace:
     curl <service>.<namespace>
 	
@@ -356,45 +360,34 @@ Querying the Cluster DNS:
 	
 For Leaving the Pod terminal give the following command, "Ctrl + P and Ctrl + Q." But if 'exit' command is executed then the new Pod is regenerated.
 
-Note: All services within the clusetr are given A records by the DNS server. pods
-will only be assigned A records if the hostname is set for the Pod. When deploying a
-Pod, additional DNS configurations can be set (dnsConfig) such as the name server,
-search domains, etc.
+Note: All services within the clusetr are given A records by the DNS server. pods will only be assigned A records if the hostname is set for the Pod. When deploying a Pod, additional DNS configurations can be set (dnsConfig) such as the name server, search domains, etc.
 
 
 Replication
 ===========
-Kubernetes uses replication to create multiple instances of an application 
-across the cluster. One of the great features of Kubernetes is the ability to
-replocate pods(and their underlying containers) across the cluster. Originally
-in Kubernetes, the ReplicationController performed this action. ReplicaSets 
-used in conjunction with Deployments have largely replaced this role.
+Kubernetes uses replication to create multiple instances of an application across the cluster. One of the great features of Kubernetes
+is the ability to replocate pods(and their underlying containers) across the cluster. Originally in Kubernetes, the 
+ReplicationController performed this action. ReplicaSets used in conjunction with Deployments have largely replaced this role.
 
 ReplicationController
 ---------------------
-The ReplicationController exists to ensure that the right amount of pods exits
-across the cluster. So, if there are too many pods, the ReplicationController 
-will terminate the excess number of pods. Conversely,if there are too few pods,
-the ReplicationController will create pods until the defined amount is reached.
-This is particulary important in the case of node failure or a service 
-disruption. Even if the desired pod amount is one for given service, the 
-ReplicationController will ensure that the pod is always available.
+The ReplicationController exists to ensure that the right amount of pods exits across the cluster. So, if there are too many pods, the
+ReplicationController will terminate the excess number of pods. Conversely,if there are too few pods, the ReplicationController will
+create pods until the defined amount is reached. This is particulary important in the case of node failure or a service disruption. 
+Even if the desired pod amount is one for given service, the ReplicationController will ensure that the pod is always available.
 
 ReplicaSet
 ----------
-ReplicationController and ReplicaSets are almost the same. The main way they differ is that
-ReplicaSets support the new set-based selector requirements as oppose to ReplicationControllers,
-which only support equality-based selector requirements. The use of ReplicaSets alone is 
-discouraged in favour of using Deployments(which leverage ReplicaSet functionality).
+ReplicationController and ReplicaSets are almost the same. The main way they differ is that ReplicaSets support the new set-based
+selector requirements as oppose to ReplicationControllers, which only support equality-based selector requirements. The use of
+ReplicaSets alone is discouraged in favour of using Deployments(which leverage ReplicaSet functionality).
 
 Deployments
 ------------
-Deployments have effectively replaced ReplicationControllers as the preferred method of
-deploying and updating a set of Pods with replication(through ReplicaSets). The desired
-amount of Pods (replicas) are defined in a deployment which leverages ReplicaSets to ensure
-their creation. Deployments manage their own ReplicaSets, so there is no need to manage the
-ReplicaSets outside of the deployment.
-
+Deployments have effectively replaced ReplicationControllers as the preferred method of deploying and updating a set of Pods with
+replication(through ReplicaSets). The desired amount of Pods (replicas) are defined in a deployment which leverages ReplicaSets to
+ensure their creation. Deployments manage their own ReplicaSets, so there is no need to manage the ReplicaSets outside of the 
+deployment.
 
 deployment.yaml
 ---------------
@@ -430,20 +423,23 @@ be created under 'default' namespace.
 
 kubectl get deployments --all-namespaces
 
-
 kubectl get pods 
 will result three pods running in the default namespace.
 
 
 Ingress
 =========
-In reference to Kubernetes, Ingres is an API object that manages external access to services in the cluster typically through HTTP. Simply put this is the mechanism or the entry way by which the services in a private cluster are accessed. Ingress can be configured to provide services with externally-reachable URLs, load balanced 
-traffic, SSL termination, and name-based virtual hosting.
+In reference to Kubernetes, Ingres is an API object that manages external access to services in the cluster typically through HTTP.
+Simply put this is the mechanism or the entry way by which the services in a private cluster are accessed. Ingress can be configured to
+provide services with externally-reachable URLs, load balanced traffic, SSL termination, and name-based virtual hosting.
 
-Ingress is currently in beta resource and requires an ingres controller to function. The supported controllers as of this point are GCE and nginx. The type of controller that needs to be implemented will depend heavily on the platform being used. Please refer to the Kubernetes documentaion for specific implementations.
+Ingress is currently in beta resource and requires an ingres controller to function. The supported controllers as of this point are GCE
+and nginx. The type of controller that needs to be implemented will depend heavily on the platform being used. Please refer to the
+Kubernetes documentaion for specific implementations.
 
-In real-world example, the main ingres will be provided by an edge router or a gateway from a cloud provider which will then route traffic to the ingres controller in the Kubernetes cluster. For our example, we will be using a NodePort service which will expose a static port on our cluster nodes which can be accessed outside of the
-internal cluster IPs.
+In real-world example, the main ingres will be provided by an edge router or a gateway from a cloud provider which will then route
+traffic to the ingres controller in the Kubernetes cluster. For our example, we will be using a NodePort service which will expose a
+static port on our cluster nodes which can be accessed outside of the internal cluster IPs.
 
 Services:
 ----------
@@ -476,21 +472,23 @@ Accessing the Microservice Front End:
 Scaling Microservices
 =====================
 
-Kubernetes provides the ability to scale the individual components of a microservice application independently. 
-this is incredibly useful if one of the pods in your cluster requires more resources, or if it has more user
-traffic than the other pods in your cluster. By individually scaling services, reosurces are not wasted on scaling
-every service in the microservice application.
+Kubernetes provides the ability to scale the individual components of a microservice application independently. This is incredibly
+useful if one of the pods in your cluster requires more resources, or if it has more user traffic than the other pods in your cluster.
+By individually scaling services, reosurces are not wasted on scaling every service in the microservice application.
 
 Manual Scaling:
 ---------------
 1. List deployments:
-  kubectl get deployments -n <namespace>
+
+   kubectl get deployments -n <namespace>
   
 2. Get additional information about deployments:
-  kubectl describe deployments <deployment> -n <namespace>
+  
+   kubectl describe deployments <deployment> -n <namespace>
   
 3. Increase the replicas in the deployment file and apply the changes.
-  <editor> deployment.yml
+  
+  vi deployment.yml
   
   kubectl apply -f deployment.yml
   
@@ -504,32 +502,36 @@ Manual Scaling:
   For e.g kubectl scale deployment/payment --replicas=3 -n sock-shop
   
 6. List deployment and pods:
+  
   kubectl get deployments -n <namespace>
   
   
-The number of Pods can also be scaled down by reducing the amount
-of replicas via the command line or the deployment file.
+The number of Pods can also be scaled down by reducing the amount of replicas via the command line or the deployment file.
 
 Autoscaling
 ------------
-As mentioned previously, pods can be scaled manually by updating the number of replicas in a deployment,
-replication controller, or replica set. Kubernetes also allows automatic scaling by implementing a Horizontal
-Pod scaleror HPA for short. The HPA is implemented as a Kubernetes API resource and a controller which will
-automatically scale the number of pods based on the observed CPU utilization(or other provided custom metrics).
+As mentioned previously, pods can be scaled manually by updating the number of replicas in a deployment, replication controller, or
+replica set. Kubernetes also allows automatic scaling by implementing a Horizontal Pod scaleror HPA for short. The HPA is implemented as
+a Kubernetes API resource and a controller which will automatically scale the number of pods based on the observed CPU utilization(or
+other provided custom metrics).
 
 To autoscale:
 
 1. List the current deployments
+
   kubectl get deployments -n sock-shop
   
 2. Create a horizontal Pod Autoscaler for a deployment:
+
   kubectl autoscale deployment <deployment> -n <namespace> --min 2 --max 6 --cpu-percent 65
   Ex. kubectl autoscale deployment front-end -n sock-shop --min 2 --max 6 --cpu-percent 65
   
 3. List Horizontal Pod Autoscaler.
+  
   kubectl get hpa -n <namespace>
 
 4. Delete Horizontal pod Autoscaler.
+  
   kubectl delete hpa -n <namespace> <hpa>
   E.g kubectl delete hpa -n sock-shop front-end
   
@@ -544,20 +546,24 @@ Horizontal Scaling increases the number of pods across a cluster.
 
 Self Healing:
 =============
-Kubernetes ensures that the desired state of the cluster and the actual state of the clsuter are always in sync.
-This is made possible through continuous monitoring within the Kubernetes cluster. Whenever the state of a cluster 
-changes from what has been defined, the various components of Kubernetes work to bring it back to its defined state. This type of automated recovery is often referred to as Self Healing.
+Kubernetes ensures that the desired state of the cluster and the actual state of the clsuter are always in sync. This is made possible
+through continuous monitoring within the Kubernetes cluster. Whenever the state of a cluster changes from what has been defined, the
+various components of Kubernetes work to bring it back to its defined state. This type of automated recovery is often referred to as
+Self Healing.
 
 Automatic Recovery
 ------------------
 1. List deployments and pods
+
 kubectl get deployments -n <namespace>
 kubectl get pods -n <namespace>
 
 2. Delete a pod
+
 kubectl delete pod <pod_name> -n <namespace>
 
 3. List deployments and pods
+
 kubectl get deployments -n <namespace>
 kubectl get pods -n <namespace>
 
@@ -566,6 +572,7 @@ Install application without replication
 -----------------------------------------
 
 1. Install application without deployment
+
   kubectl create -f application.yml
 
 application.yml 
@@ -580,7 +587,8 @@ spec:
     image: nginx
   
 2. Delete pod
-kubectl delete pod <pod_name> -n <namespace>
+
+  kubectl delete pod <pod_name> -n <namespace>
 
 Note: Pods that are not created through a deployment
 or other replication method (i.e ReplicationController or ReplicaSet)
@@ -589,35 +597,43 @@ will not automatically recover.
 Node Failure:
 -------------
 1. List Nodes:
+  
   kubectl get nodes
 
 2. List deployments:
+  
   kubectl get deployments -n <namespace>
   
 3. List pods:
+  
   kubectl get pods -n <namespace>
   
 4. Gain additional information about pods, like on which cluster node it is running:
+  
   kubectl describe pods -n <namespace> <pod_name>
   
 5. Shutdown one of the cluster node, by executing the poweroff command.
 
 5.a) In the master node check the "Status" of the cluster node.
-   kubectl get nodes
+  
+  kubectl get nodes
    This should report the "Status" of the cluster node as "NotReady"
 
 6. List pods and deployments:
+  
   kubectl get pods -n <namespace>
   kubectl get deployments -n <namespace>
   
 7. Start up cluster node.
 7.a) In the master node check the "Status" of the cluster node.
-   kubectl get nodes
+  
+  kubectl get nodes
    This should report the "Status" of the cluster node as "Ready"
 
 
 8. List nodes, deployments and pods:
+  
   kubectl get nodes
   kubectl get pods -n <namespace> ===> This will report one of the shutdown cluster node having the pod status
-  as Unknown, but a new pod is created on one of the master or cluster node.
+                                       as Unknown, but a new pod is created on one of the master or cluster node.
   kubectl get deployments -n <namespace>
